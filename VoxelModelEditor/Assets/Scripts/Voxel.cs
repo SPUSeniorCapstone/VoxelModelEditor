@@ -1,6 +1,10 @@
+using B83.MeshTools;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -16,13 +20,32 @@ public struct Voxel
         solid = true;
     }
 
-    public Vector2 GetUV0()
+
+}
+
+public static class VoxelExtensions
+{
+    public static void WriteVoxel(this BinaryWriter writer, Voxel v)
     {
-        return new Vector2(color.r, color.g);
+        writer.Write(v.solid);
+        writer.WriteColor32(v.color);
     }
 
-    public Vector2 GetUV1()
+    public static Voxel ReadVoxel(this BinaryReader reader)
     {
-        return new Vector2(color.g, color.a);
+        Voxel v = new Voxel();
+        v.solid = reader.ReadBoolean();
+        v.color = reader.ReadColor32();
+        return v;
+    }
+
+    public static void WriteVector3Int (this BinaryWriter writer, Vector3Int vec)
+    {
+        writer.Write(vec.x); writer.Write(vec.y); writer.Write(vec.z);
+    }
+
+    public static Vector3Int ReadVector3Int(this BinaryReader reader)
+    {
+        return new Vector3Int(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
     }
 }
